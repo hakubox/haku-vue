@@ -1,0 +1,439 @@
+// autoprefixer: > 5%; last 10 Chrome versions; not ie 6-8, main: main.less, sourceMap: true
+
+body {
+    .themeInit(@themeName);
+
+    input.input {
+        box-sizing: border-box;
+        border-radius: @border-radius1;
+        height: @size-sm;
+        font-size: @font-sm;
+        line-height: @lineheight-h6;
+        box-sizing: border-box;
+        vertical-align: top;
+        transition: 0.15s;
+        outline: none !important;
+
+        &:not([type]),
+        &[type='text'],
+        &[type='time'],
+        &[type='month'],
+        &[type='week'],
+        &[type='datetime'],
+        &[type='date'],
+        &[type='datetime-local'],
+        &[type='password'],
+        &[type='number'],
+        &[type='money'],
+        &[type='search'],
+        &[type='tel'],
+        &[type='url'],
+        &[type='color'],
+        &[type='email'] {
+            width: 100%;
+            border: 1px solid @color-gray-border;
+
+            &.disabled,&[disabled]:not([disabled='false']) {
+                border-color: @color-gray-border;
+                background-color: @color-gray-disabled-bg;
+                pointer-events: none;
+                cursor: not-allowed;
+            }
+
+            &.input {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+        }
+        
+        &.input-xs {
+            height: @size-xs;
+            font-size: @font-xs;
+        }
+
+        &.input-sm {
+            height: @size-sm;
+            font-size: @font-sm;
+        }
+
+        &.input-md {
+            height: @size-md;
+            font-size: @font-md;
+        }
+
+        &.input-lg {
+            height: @size-lg;
+            font-size: @font-md;
+        }
+        
+        &:focus {
+            border-color: @color-gray-assist-text;
+        }
+
+        //无效状态
+        &.invalid {
+            border-color: @color-danger;
+
+            +i {
+                color: @color-danger;
+            }
+        }
+
+        //有效状态
+        &.valid {
+            border-color: @color-success;
+
+            +i {
+                color: @color-success;
+            }
+        }
+
+        //提示信息或警告
+        +i {
+            position: relative;
+            box-sizing: border-box;
+            display: block;
+            font-style: normal;
+            width: 100%;
+            height: 10px;
+            font-size: 12px;
+            color: #999999;
+            text-align: left;
+            padding-left: 0px;
+            padding-top: 1px;
+            padding-right: 3px;
+
+            &:not([count]):empty {
+                display: none;
+            }
+
+            &[maxcount]:before {
+                content: attr(count)' / 'attr(maxcount);
+                position: absolute;
+                float: right;
+            }
+
+            &[label]:after {
+                content: attr(label);
+                position: absolute;
+                left: 5px;
+                top: 0px;
+            }
+
+            >i {
+                color: inherit;
+            }
+        }
+    }
+
+    .input-range {
+        position: relative;
+
+        >input.input {
+            box-sizing: border-box;
+            width: ~"calc(50% - 10px)";
+            margin-right: -3px;
+        }
+
+        >input.input + input {
+            margin-left: 20px;
+        }
+
+        &:before {
+            content: '-';
+            font-size: @font-xs;
+            position: absolute;
+            display: block;
+            text-align: center;
+            width: 21px;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 0;
+            right: 0;
+            margin: auto;
+            z-index: 1;
+        }
+
+        &[range-split]:before {
+            content: attr(range-split);
+        }
+    }
+
+    textarea.input {
+        box-sizing: border-box;
+        height: 30px;
+        padding: 10px;
+        font-size: @font-xs;
+        line-height: @lineheight-h6;
+        min-height: 120px;
+        max-height: 500px;
+        width: 100%;
+        border: 1px solid #EEE;
+        border-radius: @border-radius1;
+        
+        resize: vertical;
+        overflow-x: hidden;
+        overflow-y: auto;
+        max-height: 500px;
+        transition: 0.15s;
+        outline: none;
+
+        &:focus {
+            border-color: @color-gray-assist-text;
+        }
+
+        //无效状态
+        &.invalid {
+            border-color: @color-danger;
+
+            +i {
+                color: @color-danger;
+            }
+        }
+
+        //有效状态
+        &.valid {
+            border-color: @color-success;
+
+            +i {
+                color: @color-success;
+            }
+        }
+
+        &.disabled,&[disabled]:not([disabled='false']) {
+            border-color: @color-gray-border;
+            background-color: @color-gray-disabled-bg;
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+
+        +i {
+            position: relative;
+            box-sizing: border-box;
+            display: block;
+            font-style: normal;
+            width: 100%;
+            min-height: 15px;
+            font-size: @font-xs;
+            color: @color-gray-assist-text;
+            text-align: left;
+            padding-left: 5px;
+            padding-right: 3px;
+            float: left;
+
+            &[maxcount]:before {
+                content: attr(count)' / 'attr(maxcount);
+                position: absolute;
+                right: 3px;
+            }
+        }
+        
+        &.input-xs {
+            font-size: @font-xs;
+            line-height: @lineheight-h6;
+
+            +i {
+                font-size: @font-xs;
+            }
+        }
+
+        &.input-sm {
+            font-size: @font-sm;
+            line-height: @lineheight-h5;
+
+            +i {
+                font-size: @font-sm;
+            }
+        }
+
+        &.input-md {
+            font-size: @font-md;
+            line-height: @lineheight-h4;
+
+            +i {
+                font-size: @font-md;
+            }
+        }
+    }
+
+    div.input {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+
+        &.input-xs {
+            
+            > input {
+                font-size: @font-xs;
+                line-height: @lineheight-h6;
+
+                +i {
+                    font-size: @font-xs;
+                }
+            }
+        }
+
+        &.input-sm {
+
+            > input {
+                font-size: @font-sm;
+                line-height: @lineheight-h5;
+
+                +i {
+                    font-size: @font-sm;
+                }
+            }
+        }
+
+        &.input-md {
+
+            > input {
+                font-size: @font-md;
+                line-height: @lineheight-h4;
+
+                +i {
+                    font-size: @font-md;
+                }
+            }
+        }
+
+        > input {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid @color-gray-border;
+            height: 30px;
+            font-size: 14px;
+            outline: none !important;
+            transition: 0.15s;
+            border-radius: @border-radius1;
+            padding-left: 10px;
+            padding-right: 10px;
+
+            &:focus {
+                border-color: @color-gray-assist-text;
+            }
+
+            &::-webkit-input-placeholder { color: @color-gray-disabled-text; }
+            &:-moz-placeholder { color: @color-gray-disabled-text; }
+            &:-ms-input-placeholder { color: @color-gray-disabled-text; }
+        }
+
+        //无效状态
+        &.invalid {
+            
+
+            > input {
+                border-color: @color-danger;
+                color: @color-danger;
+            }
+        }
+
+        //有效状态
+        &.valid {
+
+            > input {
+                border-color: @color-success;
+                color: @color-success;
+            }
+        }
+
+        >.input-icon {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            font-size: 18px;
+            line-height: 30px;
+            margin-left: 5px;
+            color: @color-gray-disabled-text;
+
+            +input {
+                padding-left: 30px;
+            }
+        }
+    }
+
+    .input::-webkit-input-placeholder { color: @color-gray-disabled-text; }
+    .input:-moz-placeholder { color: @color-gray-disabled-text; }
+    .input:-ms-input-placeholder { color: @color-gray-disabled-text; }
+
+    //输入组
+    .input-group {
+        width: 100%;
+        display: inline-table;
+        vertical-align: top;
+
+        +.input-group {
+            margin-top: 15px;
+        }
+
+        >.input {
+            &:not([type]),
+            &[type='text'],
+            &[type='time'],
+            &[type='month'],
+            &[type='week'],
+            &[type='datetime'],
+            &[type='date'],
+            &[type='datetime-local'],
+            &[type='password'],
+            &[type='number'],
+            &[type='money'],
+            &[type='search'],
+            &[type='tel'],
+            &[type='url'],
+            &[type='color'],
+            &[type='email'] {
+                display: table-cell;
+                vertical-align: middle;
+                border-radius: 0px;
+            }
+        }
+
+        >span,>label,>i,>.btn,>.input {
+            &:first-child {
+                border-top-left-radius: @border-radius1;
+                border-bottom-left-radius: @border-radius1;
+            }
+
+            &:last-child {
+                border-top-right-radius: @border-radius1;
+                border-bottom-right-radius: @border-radius1;
+            }
+        }
+
+        >span,>label,>i,>.btn {
+            display: table-cell;
+            white-space: nowrap;
+            vertical-align: middle;
+            padding-left: 8px;
+            padding-right: 8px;
+            width: 1%;
+            border-radius: 0px;
+        }
+
+        >.btn.btn-block {
+            display: table-cell;
+        }
+
+        >.input-group-split {
+            width: 0px;
+            padding: 0px;
+
+            +.input {
+                border-left-width: none;
+            }
+        }
+
+        //分散表单
+        &.spacing {
+            border-spacing: 10px 0px;
+            width: calc(100% + 20px);
+            margin-left: -10px;
+
+            >.input,>.btn,>.el-input {
+                border-radius: @border-radius2;
+                border-width: 1px;
+            }
+        }
+    }
+}
