@@ -9,11 +9,13 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "test:e2e": "vue-cli-service test:e2e",
-    "test:unit": "vue-cli-service test:unit"
+    "test:unit": "vue-cli-service test:unit",
+    "buildapi": "cd cli | dotnet tools.dll"
   },
   "dependencies": {
     "ant-design-vue": "^1.3.10",
     "core-js": "^2.6.5",
+    "dayjs": "^1.8.14",
     "register-service-worker": "^1.6.2",
     "vue": "^2.6.10",
     "vue-class-component": "^7.1.0",
@@ -37,19 +39,24 @@
     "@vue/test-utils": "1.0.0-beta.29",
     "axios": "^0.19.0",
     "babel-eslint": "^10.0.1",
+    "base64-js": "^1.3.0",
     "chai": "^4.1.2",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
+    "gulp": "^4.0.2",
     "less": "^3.9.0",
     "less-loader": "^5.0.0",
     "lint-staged": "^8.1.5",
     "lodash": "^4.17.11",
+    "node-cmd": "^3.0.0",
+    "qs": "^6.7.0",
     "sass": "^1.18.0",
     "sass-loader": "^7.1.0",
     "typescript": "^3.4.3",
     "vue-cli-plugin-webpack-bundle-analyzer": "^1.3.0",
     "vue-i18n": "^8.11.2",
-    "vue-template-compiler": "^2.6.10"
+    "vue-template-compiler": "^2.6.10",
+    "vuex-class": "^0.3.2"
   },
   "eslintConfig": {
     "root": true,

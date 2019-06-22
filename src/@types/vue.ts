@@ -1,7 +1,7 @@
 //公共函数库
 import * as common from '@/tools/common';
 import api from '@/api/index';
-import { pageFilter, Breadcrumb } from "@/@types/basic";
+import { pageFilter, Breadcrumb, UserInfo } from "@/@types/basic";
 //全局枚举
 import sysEnum from '@/enum';
 import { Vue } from 'vue-property-decorator';
@@ -35,17 +35,19 @@ declare module 'vue/types/vue' {
         $bus: Vue;
         /** 系统级配置 */
         $config: SysConfig;
+        /** 当前组件权限 */
+        permission: string | Array<string> | Function;
 
         
         /** [root]面包屑 */
         breadcrumbSource: Array<Breadcrumb>;
         /** [root]设置面包屑 */
-        setBreadcrumb: Function;
-        /** [root]主要权限 */
+        setBreadcrumb(arr: Array<Breadcrumb | string>): void;
+        /** [root]是否为管理员 */
         is_manager: boolean;
         /** [root]获取分页器默认参数 */
         getPagination(config?: object): Pagination;
         /** [root]用户信息 */
-        userInfo: object;
+        userInfo: UserInfo;
     }
 };

@@ -19,3 +19,14 @@ export interface Breadcrumb {
     /** 点击事件 */
     click?: Function
 }
+
+/** 用户信息 */
+export interface UserInfo {
+    id?: string,
+    name?: string,
+    rolename?: string,
+    nickname?: string,
+    phone?: string,
+    email?: string,
+    createtime?: Date | number
+}

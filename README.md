@@ -42,6 +42,16 @@ npm run serve --mode production
 npm run build
 ```
 
+## 获取最新API接口
+```
+gulp api
+```
+
+## 赋默认url并获取最新API接口
+```
+gulp api --src 'url'
+```
+
 ## 运行测试
 ```
 npm run test

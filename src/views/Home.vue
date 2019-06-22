@@ -60,8 +60,8 @@ const data = [{
 }];
 
 @Component({
-  components: {
-  }
+    components: {
+    }
 })
 export default class UserManager extends Vue {
     visible:boolean = false;
@@ -81,7 +81,7 @@ export default class UserManager extends Vue {
     }
     handleCancel(e) {
         console.log('Clicked cancel button');
-        this.visible = false
+        this.visible = false;
     }
     /** 搜索 */
     onSearch() {

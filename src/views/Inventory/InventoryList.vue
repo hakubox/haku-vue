@@ -15,7 +15,7 @@
             </div>
 
             <hr />
-            <div class="materiel-list">
+            <div class="cost-list">
                 <a-table :columns="columns" :dataSource="data" size="small">
                     <a slot="name" slot-scope="text" href="javascript:;">{{text}}</a>
                     <span slot="customTitle">Name</span>
@@ -188,7 +188,7 @@ export default class InventoryList extends Vue {
     }
     created() {
         this.$root.setBreadcrumb(['库存管理','库存列表']);
-        //this.form = this.$form.createForm(this);
+        this.form = this.$form.createForm(this);
     }
     edit(item) {
         this.form.setFieldsValue(item);

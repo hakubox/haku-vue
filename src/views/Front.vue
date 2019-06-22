@@ -32,14 +32,9 @@
 </template>
 
 <script lang="ts">
-import AsideMenu from '@/components/AsideMenu.vue';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 
-@Component({
-  components: {
-      AsideMenu
-  }
-})
+@Component({})
 export default class UserManager extends Vue {
 }
 </script>

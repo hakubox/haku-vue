@@ -1,6 +1,9 @@
 let webpack = require('webpack');
 
 module.exports = {
+    devServer: {
+		proxy: "http://api.taishengsys.gejinet.com/"
+	},
     runtimeCompiler: true,
     configureWebpack: {
         plugins: [

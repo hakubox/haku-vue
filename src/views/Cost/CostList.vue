@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="main-tool-btns">
-            <a-button v-if="this.$root.is_manager" type="primary" icon="plus" @click="add">添加成本</a-button>
+            <a-button permission="cost-edit" v-if="this.$root.is_manager" type="primary" icon="plus" @click="add">添加成本</a-button>
         </div>
         <a-layout-content class="main-content">
             <div class="row">
@@ -10,14 +10,14 @@
                     <li label="商品名称"><a-input v-model="filter.name"></a-input></li>
                 </ul>
                 <div class="col3">
-                    <a-button icon="search" type="primary" @click="search">搜索</a-button>
+                    <a-button :loading="isLoadingData" icon="search" type="primary" @click="search">搜索</a-button>
                 </div>
             </div>
 
             <hr />
 
-            <div class="materiel-list">
-                <a-table :pagination="pagination" @change="paginationChange" rowKey="id" :columns="columns" :dataSource="data" size="small">
+            <div class="cost-list">
+                <a-table :loading="{ tip: '加载中...', spinning: isLoadingData }" :pagination="pagination" @change="paginationChange" rowKey="id" :columns="columns" :dataSource="data" size="small">
                     <a slot="name" slot-scope="text" href="javascript:;">{{text}}</a>
                     <span slot="customTitle">Name</span>
                     <span slot="tags" slot-scope="tags">
@@ -31,7 +31,7 @@
                     </span>
                     <span slot="action" slot-scope="item, record">
                         <a-button :style="{marginRight: '10px'}" type="primary" icon="edit" @click="edit(record)" size="small">编辑</a-button>
-                        <a-popconfirm placement="topRight" title="是否删除成本信息？" @confirm="remove(record.id)">
+                        <a-popconfirm okType="danger" placement="topRight" title="是否删除成本信息？" @confirm="remove(record.id)">
                             <a-button type="danger" icon="delete" size="small">删除</a-button>
                         </a-popconfirm>
                     </span>
@@ -40,7 +40,7 @@
         </a-layout-content>
 
         <!-- 新增编辑成本 -->
-        <a-drawer :title="(productId ? '编辑' : '新增') + '成本'" :width="720" @close="onClose(false)" :visible="visible" :wrapStyle="{height: 'calc(100% - 108px)',overflow: 'auto',paddingBottom: '108px'}">
+        <a-drawer :title="(productId ? '编辑' : '新增') + '成本'" @close="onClose(false)" :width="720" :visible="drawerVisible" :wrapStyle="{height: 'calc(100% - 108px)',overflow: 'auto',paddingBottom: '108px'}">
             <a-form :form="form" layout="horizontal">
                 <a-row :gutter="16">
                     <a-col :span="12">
@@ -125,7 +125,7 @@
             </a-form>
             <div :style="{ position: 'absolute', left: 0, bottom: 0, width: '100%', borderTop: '1px solid #e9e9e9', padding: '10px 16px', background: '#fff', textAlign: 'right', }" >
                 <a-button :style="{marginRight: '8px'}" @click="onClose(false)">取消</a-button>
-                <a-button @click="onClose(true)" type="primary">提交</a-button>
+                <a-button :loading="$root.isLoading" @click="onClose(true)" type="primary">提交</a-button>
             </div>
         </a-drawer>
 
@@ -134,16 +134,28 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { getPagination } from '@/tools/common'
+import { State, Getter, Mutation } from 'vuex-class';
+import { getPagination } from '@/tools/common';
+import { WrappedFormUtils } from 'ant-design-vue/types/form/form'
 
 @Component({
   components: {
   }
 })
 export default class MaterieIList extends Vue {
-    isnew = false;
-    visible = false;
-    confirmLoading = false;
+    //传入属性
+    @Prop({ type: Number, default: 0 }) readonly num!: number;
+    //计算属性
+    private get doubleMid(): number {
+        return this.num * 2;
+    }
+
+
+    /** 是否正在加载主表格数据 */
+    isLoadingData:boolean = false;
+    isnew:boolean = false;
+    drawerVisible:boolean = false;
+    confirmLoading:boolean = false;
     data:Array<object> = [];
     columns:Array<object> = [];
     /** 成本Id */
@@ -162,42 +174,54 @@ export default class MaterieIList extends Vue {
         code: '',
         name: ''
     };
-    pagination;
+    pagination = this.$root.getPagination();
     created() {
-        this.pagination = this.$root.getPagination();
-        this.$root.setBreadcrumb(['成本管理','成本列表']);
+        console.log('thisB', this);
         this.form = this.$form.createForm(this);
         this.formInbound = this.$form.createForm(this);
         this.formOutbound = this.$form.createForm(this);
+        this.$root.setBreadcrumb(['成本管理','成本列表']);
         if(this.$route.query.isnew) {
-            this.visible = true;
+            this.drawerVisible = true;
         }
 
         this.roleChange();
         this.$bus.$on('rolechange', this.roleChange);
         this.search();
 
-        this.$common.get('/api/Product/GetSupplierList').then(d => this.supplierList = d);
-        this.$common.get('/api/Product/GetCategoryList').then(d => this.categoryList = d);
-        this.$common.get('/api/Product/GetBrandList').then(d => this.brandList = d);
+        this.$api.product.GetSupplierList().then(d => this.supplierList = d);
+        this.$api.product.GetCategoryList().then(d => this.categoryList = d);
+        this.$api.product.GetBrandList().then(d => this.brandList = d);
     }
     beforeRouteUpdate(to, from, next) {
         next();
         if(this.$route.query.isnew) {
-            this.visible = true;
+            // this.drawerVisible = true;
         }
     }
     paginationChange(pagination, filters, sorter) {
         this.pagination = pagination;
         this.search();
     }
+    /** 取消请求 */
+    cancelSearch() {}
     async search() {
-        this.data = await this.$api.product.GetProductList({
-            pageNum: this.pagination.current,
-            pageSize: this.pagination.defaultPageSize,
-            code: this.filter.code,
-            name: this.filter.name
-        });
+        try {
+            this.isLoadingData = true;
+            this.cancelSearch();
+            let data = await this.$api.product.GetProductList({
+                pageNum: this.pagination.current,
+                pageSize: this.pagination.defaultPageSize,
+                code: this.filter.code,
+                name: this.filter.name
+            }, {
+                cancel: this.cancelSearch
+            })
+            this.data = Object.freeze(data.list);
+            this.pagination.total = data.total;
+        } finally {
+            this.isLoadingData = false;
+        }
     }
     roleChange() {
         if(this.$root.is_manager) {
@@ -233,19 +257,23 @@ export default class MaterieIList extends Vue {
     }
     edit(item) {
         this.productId = item.id;
-        this.form.setFieldsValue(item);
-        this.visible = true;
+        this.drawerVisible = true;
+        this.$nextTick(() => {
+            this.form.setFieldsValue(item);
+        })
     }
     add() {
         this.productId = '';
-        this.form.setFieldsValue({});
-        this.visible = true;
+        this.drawerVisible = true;
+        this.$nextTick(() => {
+            this.form.setFieldsValue({});
+        })
     }
     /** 删除成本数据 */
     remove(id) {
         this.$common.get('/api/Product/DeleteProduct', { id }).then(d => {
             this.form.clearField();
-            this.visible = false;
+            this.drawerVisible = false;
             this.search();
             this.$message.success(`成本删除成功。`, 10);
         });
@@ -259,7 +287,7 @@ export default class MaterieIList extends Vue {
                         id: this.productId
                     }).then(d => {
                         this.form.clearField();
-                        this.visible = false;
+                        this.drawerVisible = false;
                         this.productId = undefined;
                         this.search();
                         this.$message.success(`成本${this.productId?'编辑':'新增'}成功。`, 10);
@@ -267,7 +295,8 @@ export default class MaterieIList extends Vue {
                 }
             });
         } else {
-            this.visible = false;
+            this.form.clearField();
+            this.drawerVisible = false;
         }
     }
     /**

@@ -1,6 +1,6 @@
 
 /** 用户模块 */
-export namespace userModule {
+export namespace user {
     
     /** 用户权限类型 */
     export enum userRole {
@@ -15,5 +15,5 @@ export namespace userModule {
 
 
 export default {
-    userModule
+    user
 }

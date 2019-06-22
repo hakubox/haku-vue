@@ -4,8 +4,8 @@
             <a-button type="primary" icon="plus" @click="edit({})">用户管理</a-button>
         </div>
         <a-layout-content class="main-content">
-            <div class="materiel-list">
-                <a-table :columns="columns" :dataSource="data" size="small">
+            <div class="cost-list">
+                <a-table :loading="{ tip: '加载中...', spinning: isLoadingData }" :columns="columns" :dataSource="data" size="small">
                     <a slot="name" slot-scope="text" href="javascript:;">{{text}}</a>
                     <span slot="customTitle">Name</span>
                     <span slot="tags" slot-scope="tags">
@@ -74,15 +74,18 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
+import { AddOrEditUserParams } from "@/api/user";
 
 @Component({
-  components: {
-  }
+    components: {
+    }
 })
 export default class About extends Vue {
     isnew = false;
     visible = false;
     confirmLoading = false;
+    /** 是否正在加载主表格数据 */
+    isLoadingData = false;
     data:Array<object> = [];
     columns = [
         { title: '姓名', dataIndex: 'nickname', key: 'nickname' },
@@ -94,12 +97,11 @@ export default class About extends Vue {
     form;
 
     created() {
-        this.root.setBreadcrumb(['用户管理']);
         this.form = this.$form.createForm(this);
+        this.$root.setBreadcrumb(['用户管理']);
         if(this.$route.query.isnew) {
             this.visible = true;
         }
-
         this.search();
     }
     beforeRouteUpdate(to, from, next) {
@@ -108,13 +110,16 @@ export default class About extends Vue {
             this.visible = true;
         }
     }
-    search() {
-        this.$common.get('/api/User/GetUserList', {
-            pageNum: 1,
-            pageSize: 10
-        }).then((d) => {
-            this.data = d;
-        })
+    async search() {
+        try {
+            this.isLoadingData = true;
+            this.data = await this.$api.user.GetUserList({
+                pageNum: 1,
+                pageSize: 10
+            });
+        } finally {
+            this.isLoadingData = false;
+        }
     }
     edit(item:any = {}) {
         this.visible = true;
@@ -135,18 +140,28 @@ export default class About extends Vue {
     // 新增/编辑功能
     onClose(isConfirm) {
         if(isConfirm) {
-            this.form.validateFields((errors, values) => {
+            this.form.validateFields(async (errors, values) => {
                 if(!errors) {
-                    this.$common.get(this.userId ? '/api/User/EditUser' : '/api/User/AddUser', {
+                    await this.$api.user.AddOrEditUser(<AddOrEditUserParams>{
                         ...this.form.getFieldsValue(),
-                        id: this.userId
-                    }).then(d => {
-                        this.form.clearField();
-                        this.visible = false;
-                        this.userId = '';
-                        this.search();
-                        this.$message.success(`用户${this.userId?'编辑':'新增'}成功。`, 10);
+                        Id: this.userId
                     });
+                    this.form.clearField();
+                    this.visible = false;
+                    this.userId = '';
+                    this.search();
+                    this.$message.success(`用户${this.userId?'编辑':'新增'}成功。`, 10);
+
+                    // this.$common.get(this.userId ? '/api/User/EditUser' : '/api/User/AddUser', {
+                    //     ...this.form.getFieldsValue(),
+                    //     id: this.userId
+                    // }).then(d => {
+                    //     this.form.clearField();
+                    //     this.visible = false;
+                    //     this.userId = '';
+                    //     this.search();
+                    //     this.$message.success(`用户${this.userId?'编辑':'新增'}成功。`, 10);
+                    // });
                 }
             });
         } else {

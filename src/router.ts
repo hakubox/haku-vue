@@ -9,31 +9,48 @@ export default new Router({
     base: process.env.BASE_URL,
     routes: [
         {
-            path: '/', redirect: '/materiel'
+            path: '/', redirect: '/front/cost'
         }, {
-            //成本管理
-            path: '/materiel', name: 'materiel',
-            component: () => import(/* webpackChunkName: "views" */ './views/Materiel/MaterielList.vue')
-        }, {
-            //报价信息管理
-            path: '/quotedprice', name: 'quotedprice',
-            component: () => import(/* webpackChunkName: "views" */ './views/Quotedprice/QuotedpriceList.vue')
-        }, {
-            //库存管理
-            path: '/inventory', name: 'inventory',
-            component: () => import(/* webpackChunkName: "views" */ './views/Inventory/InventoryList.vue')
-        }, {
-            //用户管理
-            path: '/usermanager', name: 'usermanager',
-            component: () => import(/* webpackChunkName: "views" */ './views/User/UserManager.vue')
-        }, {
-            //登录
             path: '/login', name: 'login',
-            component: () => import(/* webpackChunkName: "views" */ './views/Login.vue')
+            meta: { title: '登录', ispublic: true },
+            component: () => import(/* webpackChunkName: "login" */ './views/Login.vue')
         }, {
-            //关于
             path: '/about', name: 'about',
-            component: () => import(/* webpackChunkName: "views" */ './views/About.vue')
+            meta: { 
+                title: '关于'
+            },
+            component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
+        }, {
+            path: '/front',
+            component: () => import(/* webpackChunkName: "front" */ './views/Front.vue'),
+            children: [
+                {
+                    path: '403', name: '403',
+                    meta: { title: '没有权限', ispublic: true },
+                    component: () => import('./views/Sys/403.vue')
+                }, {
+                    path: 'cost', name: 'cost',
+                    meta: { 
+                        title: '成本管理',
+                        permission: ['cast_edit', 'cast_add']
+                    },
+                    component: () => import(/* webpackChunkName: "front" */ './views/Cost/CostList.vue')
+                }, {
+                    path: 'quotedprice', name: 'quotedprice',
+                    meta: { 
+                        title: '报价信息管理'
+                    },
+                    component: () => import(/* webpackChunkName: "front" */ './views/Quotedprice/QuotedpriceList.vue')
+                }, {
+                    path: 'inventory', name: 'inventory',
+                    meta: { title: '库存管理' },
+                    component: () => import(/* webpackChunkName: "front" */ './views/Inventory/InventoryList.vue')
+                }, {
+                    path: 'usermanager', name: 'usermanager',
+                    meta: { title: '用户管理' },
+                    component: () => import(/* webpackChunkName: "front" */ './views/User/UserManager.vue')
+                }
+            ]
         }
     ]
 });
