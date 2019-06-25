@@ -73,14 +73,14 @@ export default class UserManager extends Vue {
                         password: values.password
                     });
 
-                    let permissions = await this.$common.get('https://easy-mock.com/mock/5cfb370f8115d57ff6ad371c/example/getAllAuthorize');
-                    this.$store.commit('setPermissions', permissions.data);
-
                     localStorage.setItem('Authorization', 'Bearer ' + token);
                     this.$root.userInfo = await this.$api.user.GetUser();
-                    this.$root.is_manager = this.$root.userInfo.rolename == 'admin';
-                    this.$bus.$emit('routerchange', { name: 'cost', path: '/front/cost', query: {}});
-                    this.$router.push('/front/cost');
+
+                    let permissions = await this.$api.funcation.GetFuncationListByUserId();
+                    this.$store.commit('setPermissions', permissions);
+
+                    this.$bus.$emit('routerchange', { name: 'quotedprice', path: '/front/quotedprice', query: {}});
+                    this.$router.push('/front/quotedprice');
                 } finally {
                     this.isLoading = false;
                 }

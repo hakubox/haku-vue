@@ -1,16 +1,18 @@
 //公共函数库
 import * as common from '@/tools/common';
 import api from '@/api/index';
-import { pageFilter, Breadcrumb, UserInfo } from "@/@types/basic";
+import { pageFilter, Breadcrumb, UserInfo } from "@/@types/basic.d";
 //全局枚举
-import sysEnum from '@/enum';
+// import '@/config/enum';
 import { Vue } from 'vue-property-decorator';
 import { Pagination } from 'ant-design-vue';
 
 // Vue实例类型添加
 declare module 'vue/types/vue' {
-    // interface VueConstructor {
-    // }
+    interface VueConstructor {
+        /** 当前组件权限 */
+        permission: string | Array<string> | Function;
+    }
 
     /** 系统级配置 */
     interface SysConfig {
@@ -30,7 +32,7 @@ declare module 'vue/types/vue' {
         /** 调用后台API */
         $api: typeof api;
         /** 全局枚举 */
-        $emum: typeof sysEnum;
+        // $emum: typeof sysEnum;
         /** EventBus */
         $bus: Vue;
         /** 系统级配置 */
@@ -43,11 +45,9 @@ declare module 'vue/types/vue' {
         breadcrumbSource: Array<Breadcrumb>;
         /** [root]设置面包屑 */
         setBreadcrumb(arr: Array<Breadcrumb | string>): void;
-        /** [root]是否为管理员 */
-        is_manager: boolean;
         /** [root]获取分页器默认参数 */
         getPagination(config?: object): Pagination;
         /** [root]用户信息 */
         userInfo: UserInfo;
     }
-};
+}

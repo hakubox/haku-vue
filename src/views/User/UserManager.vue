@@ -39,9 +39,9 @@
                 <a-row :gutter="16">
                     <a-col :span="12">
                         <a-form-item label="角色" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
-                            <a-select v-decorator="['rolename', { rules: [{ required: true, message: '角色不能为空。' }], initialValue: 'user' }]">
-                                <a-select-option value="admin">管理员</a-select-option>
-                                <a-select-option value="user">操作员</a-select-option>
+                            <a-select v-decorator="['roleid', { rules: [{ required: true, message: '角色不能为空。' }], initialValue: '' }]">
+                                <a-select-option value="">——请选择——</a-select-option>
+                                <a-select-option v-for="item in roleList" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
                             </a-select>
                         </a-form-item>
                     </a-col>
@@ -80,7 +80,7 @@ import { AddOrEditUserParams } from "@/api/user";
     components: {
     }
 })
-export default class About extends Vue {
+export default class UserManager extends Vue {
     isnew = false;
     visible = false;
     confirmLoading = false;
@@ -88,20 +88,22 @@ export default class About extends Vue {
     isLoadingData = false;
     data:Array<object> = [];
     columns = [
-        { title: '姓名', dataIndex: 'nickname', key: 'nickname' },
+        { title: '用户名', dataIndex: 'name', key: 'name' },
+        { title: '昵称', dataIndex: 'nickname', key: 'nickname' },
         { title: '邮箱地址', dataIndex: 'email', key: 'email' },
         { title: '手机号码', dataIndex: 'phone', key: 'phone' },
         { title: '操作', width: '200px', scopedSlots: { customRender: 'action' } }
     ];
     userId:string = '';
+    roleList:Array<any> = [];
     form;
 
-    created() {
+    async created() {
         this.form = this.$form.createForm(this);
-        this.$root.setBreadcrumb(['用户管理']);
         if(this.$route.query.isnew) {
             this.visible = true;
         }
+        this.roleList = await this.$api.role.GetRoleList();
         this.search();
     }
     beforeRouteUpdate(to, from, next) {
@@ -129,39 +131,27 @@ export default class About extends Vue {
             this.form.setFieldsValue(item);
         })
     }
-    remove(id) {
-        this.$common.get('/api/User/DeleteUser', { id }).then(d => {
-            this.form.clearField();
-            this.visible = false;
-            this.search();
-            this.$message.success(`用户删除成功。`, 10);
-        });
+    async remove(id) {
+        await this.$api.user.DeleteUser({ id });
+        this.form.clearField();
+        this.visible = false;
+        this.search();
+        this.$message.success(`用户删除成功。`, 10);
     }
     // 新增/编辑功能
     onClose(isConfirm) {
         if(isConfirm) {
             this.form.validateFields(async (errors, values) => {
                 if(!errors) {
-                    await this.$api.user.AddOrEditUser(<AddOrEditUserParams>{
-                        ...this.form.getFieldsValue(),
-                        Id: this.userId
+                    await this.$api.user.AddOrEditUser({
+                        Id: this.userId,
+                        ...this.form.getFieldsValue()
                     });
                     this.form.clearField();
                     this.visible = false;
+                    this.$message.success(`用户${this.userId?'编辑':'新增'}成功。`, 10);
                     this.userId = '';
                     this.search();
-                    this.$message.success(`用户${this.userId?'编辑':'新增'}成功。`, 10);
-
-                    // this.$common.get(this.userId ? '/api/User/EditUser' : '/api/User/AddUser', {
-                    //     ...this.form.getFieldsValue(),
-                    //     id: this.userId
-                    // }).then(d => {
-                    //     this.form.clearField();
-                    //     this.visible = false;
-                    //     this.userId = '';
-                    //     this.search();
-                    //     this.$message.success(`用户${this.userId?'编辑':'新增'}成功。`, 10);
-                    // });
                 }
             });
         } else {

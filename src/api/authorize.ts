@@ -1,6 +1,5 @@
 import Axios, { AxiosRequestConfig } from 'axios'; 
 import { get, post } from '@/tools/common';
-import { pageFilter } from "@/@types/basic";
 
 /** 获取Token认证信息-参数 */
 export interface GetTokenParams {

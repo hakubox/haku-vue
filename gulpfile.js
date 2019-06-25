@@ -1,7 +1,7 @@
 let gulp     = require('gulp');
 let cmd      = require('node-cmd');
 let fs       = require("fs");
-var minimist = require('minimist');
+let minimist = require('minimist');
 
 const run = function(txt) {
     return new Promise(function(resolve, reject) {
@@ -31,7 +31,7 @@ const get = function(txt) {
     })
 }
 
-var options = minimist(process.argv.slice(2));
+let options = minimist(process.argv.slice(2));
 
 //执行CLI打包api接口文件
 //默认配置：http://api.taishengsys.gejinet.com/swagger/v1/swagger.json
@@ -50,7 +50,7 @@ gulp.task('api', async function(cb) {
         }
         await run(`del ${__dirname}\\cli\\source\\*.* /q`);
         await run(`dotnet ${__dirname}\\cli\\tools.dll`);
-        var timer = async () => {
+        let timer = async () => {
             let files = (await get(`dir ${__dirname}\\cli\\source\\ /b`)).split('\r\n').slice(0, -1);
             if(files.length) {
                 console.log(files);

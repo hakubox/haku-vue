@@ -1,16 +1,20 @@
-import Vue, { VNode } from "vue";
+import Vue, { VNode, VueConstructor } from "vue";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import axios from 'axios';
 import "./registerServiceWorker";
-//引入自定义基础ts类型
-import { Breadcrumb } from "@/@types/basic";
-import { } from "@/@types/antd-vue";
+import '@/config/enum';
+import {} from "@/@types/antd-vue.d";
 //公共函数库
 import * as common from '@/tools/common';
-//引入ant-design-vue
-import Antd, { Pagination } from 'ant-design-vue';
+//全局枚举
+require('moment').locale('zn-cn');
+
+//自定义指令
+import "@/directives";
+//ant-design-vue
+import "@/config/components";
 import '@/assets/less/variables.less';
 //自定义组件库
 import components from "@/components/index";
@@ -27,8 +31,11 @@ import '@fortawesome/fontawesome-pro/scss/solid.scss';
 import VueI18n from 'vue-i18n';
 import lang_en from '@/lang/en';
 import lang_zn_CN from '@/lang/zh-CN';
+import { Breadcrumb } from './@types/basic';
+import { Pagination } from 'ant-design-vue/types/pagination';
 
 //let hakuDebug = require('./lib/haku-debug/index').default;
+
 
 Vue.use(components);
 
@@ -46,7 +53,6 @@ const bus = new Vue();
 Vue.prototype.$bus = bus;
 
 Vue.use(VueI18n);
-Vue.use(Antd);
 
 let i18n = new VueI18n({
     locale: 'zh-CN',
@@ -65,36 +71,29 @@ Vue.prototype.l = () => {
 (async function () {
     //获取权限
     if(localStorage.getItem('Authorization')) {
-        let permissions = await common.get('https://easy-mock.com/mock/5cfb370f8115d57ff6ad371c/example/getAllAuthorize');
-        store.commit('setPermissions', permissions.data);
+        let permissions = await api.funcation.GetFuncationListByUserId();
+        store.commit('setPermissions', permissions);
     }
 
     Vue.mixin({
-        props: ['permission'],
-        created(this:Vue) {
-            if(this.permission) {
-                if(!this.$store.getters.checkPermissions(this.permission)) {
-                    this._render = function() {
-                        let node = new this.$vnode.constructor();
-                        node.text = '';
-                        node.isComment = true;
-                        return node;
-                    }
-                }
-            }
-        },
-        renderError (h, err) {
+        renderError(h, err) {
             return h('pre', { style: { color: 'red' }, class: 'ant-alert ant-alert-error'}, err.stack)
         }
     });
 
+    let isPageInit = false;
     //页面跳转校验
     router.beforeEach((to, from, next) => {
-        if((to.meta && to.meta.ispublic) || store.getters.checkPermissions(to.name)) {
-            bus.$emit("routerchange", to);
+        if(!to.meta || !to.meta.permission || store.getters.checkPermissions(to.meta.permission)) {
+            if(isPageInit) {
+                bus.$emit("routerchange", to);
+            } else {
+                localStorage.setItem('routerchange', JSON.stringify(to));
+            }
+            
             next();
         } else {
-            next('');
+            next('/front/403');
         }
     });
 
@@ -104,12 +103,11 @@ Vue.prototype.l = () => {
         i18n,
         render: h => h(App),
         data: () => ({
-            /** 权限 */
-            is_manager: false,
             /** 面包屑 */
             breadcrumbSource: []
         }),
-        created() {
+        mounted() {
+            isPageInit = true;
         },
         methods: {
             /**
@@ -117,11 +115,13 @@ Vue.prototype.l = () => {
              * @param {Array} arr 面包屑路径
              */
             setBreadcrumb(arr: Array<Breadcrumb | string>):void {
-                this.$set(this, 'breadcrumbSource', [
+                let initArr:Array<any> = [
                     {
-                        title: '船舶物料供应系统'
+                        title: '船舶物料供应系统',
+                        url: '/'
                     }
-                ].concat(
+                ];
+                this.$set(this, 'breadcrumbSource', initArr.concat(
                     arr.map(i => {
                         if (typeof i == 'string') {
                             return { title: i };
@@ -130,13 +130,6 @@ Vue.prototype.l = () => {
                         }
                     })
                 ));
-            },
-            /**
-             * 修改权限
-             */
-            roleChange():void {
-                this.is_manager = !this.is_manager;
-                bus.$emit('rolechange', this.is_manager);
             },
             /** 获取分页器默认属性 */
             getPagination(config: Pagination): Pagination {

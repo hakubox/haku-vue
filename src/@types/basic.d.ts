@@ -1,4 +1,3 @@
-import { pageFilter, Breadcrumb } from "@/@types/basic";
 
 /** 分页参数 */
 export interface pageFilter {
@@ -11,11 +10,11 @@ export interface pageFilter {
 /** 面包屑 */
 export interface Breadcrumb {
     /** 标签文本 */
-    title: string,
+    title: string;
     /** 跳转地址 */
-    url?: string,
+    url?: string;
     /** 图标 */
-    icon?: string,
+    icon?: string;
     /** 点击事件 */
     click?: Function
 }

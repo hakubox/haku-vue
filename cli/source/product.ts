@@ -1,6 +1,5 @@
 import Axios, { AxiosRequestConfig } from 'axios'; 
 import { get, post } from '@/tools/common';
-import { pageFilter } from "@/@types/basic";
 
 /** 获取成本列表-参数 */
 export interface GetProductListParams {
@@ -8,10 +7,8 @@ export interface GetProductListParams {
     pageNum: number;
     /** 单页数量 */
     pageSize: number;
-    /** 产品编码 */
-    code?: string;
-    /** 产品名称 */
-    name?: string;
+    /** 检索条件支持，产品编码和产品名称 */
+    searchText?: string;
     /** 供应商名称 */
     supplier?: string;
 }
@@ -129,22 +126,16 @@ export function GetInventorylogList(params?: GetInventorylogListParams, conf?: A
 
 /** 新增库存操作记录-参数 */
 export interface AddInventorylogParams {
-    /** 标识ID */
-    id?: string;
     /** 产品ID */
     productid: string;
-    /** 产品名称 */
-    productname: string;
-    /** 动作 */
+    /** 动作，，出库或入库 */
     action: string;
     /** 数量 */
     number: number;
-    /** 结余 */
-    surplus: number;
-    /** 操作人ID */
-    createuserid: string;
     /** 操作时间 */
-    createtime: string;
+    operatingtime: string;
+    /** 仓库或来源的内容 */
+    marking: string;
 }
 
 
@@ -156,6 +147,8 @@ export function AddInventorylog(params: AddInventorylogParams, conf?: AxiosReque
 
 /** dtoOrder */
 export interface dtoOrder {
+    /** 信息在Excel中的行数 */
+    index?: number;
     /** 序号 */
     id?: string;
     /** 编码 */

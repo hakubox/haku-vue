@@ -40,6 +40,10 @@ export function dateFormat(date: Date = new Date(), fmt: string = "yyyy-MM-dd"):
     return _fmt;
 };
 
+Date.prototype.format = function(fmt = 'yyyy-MM-dd') {
+    return dateFormat(this, fmt);
+}
+
 export function getLocalstorge(item: string): string | null {
     return window.localStorage.getItem(item) || null;
 };

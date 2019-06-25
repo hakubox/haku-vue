@@ -1,13 +1,12 @@
 <template>
     <div>
         <div class="main-tool-btns">
-            <a-button permission="cost-edit" v-if="this.$root.is_manager" type="primary" icon="plus" @click="add">添加成本</a-button>
-        </div>
+            <a-button v-action:cost-add type="primary" icon="plus" @click="add">添加成本</a-button>
+        </div><!--  v-action:cost-edit -->
         <a-layout-content class="main-content">
             <div class="row">
-                <ul class="infos cols2 col4">
-                    <li label="商品代码"><a-input v-model="filter.code"></a-input></li>
-                    <li label="商品名称"><a-input v-model="filter.name"></a-input></li>
+                <ul class="infos cols1 col4">
+                    <li label="查询商品"><a-input v-model="filter.searchText" placeholder="搜索商品名称或代码" ></a-input></li>
                 </ul>
                 <div class="col3">
                     <a-button :loading="isLoadingData" icon="search" type="primary" @click="search">搜索</a-button>
@@ -100,7 +99,7 @@
                             <a-input-number :style="{width:'100%'}" :precision="3" v-decorator="['ratio', { rules: [{ required: true, message: '系数不能为空。' }] }]" placeholder="系数" />
                         </a-form-item>
                     </a-col>
-                    <a-col :span="12">
+                    <a-col v-if="editItem.supplierid === 'e3dc8318-1c1f-434f-9b11-4e474d2a882d'" :span="12">
                         <a-form-item label="数量" :label-col="{ span: 8 }" :wrapper-col="{ span: 16 }">
                             <a-input-number :style="{width:'100%'}" :precision="0" v-decorator="['number', { rules: [{ required: true, message: '数量不能为空。' }] }]" placeholder="数量" />
                         </a-form-item>
@@ -109,7 +108,7 @@
                 <a-row :gutter="16">
                     <a-col :span="12">
                         <a-form-item label="供应商" :label-col="{ span: 8 }" :wrapper-col="{ span: 16 }">
-                            <a-select v-decorator="['supplierid', { rules: [{ required: true, message: '供应商不能为空。' }] }]" placeholder="供应商">
+                            <a-select v-model="editItem.supplierid" v-decorator="['supplierid', { rules: [{ required: true, message: '供应商不能为空。' }] }]" placeholder="供应商">
                                 <a-select-option v-for="item in supplierList" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
                             </a-select>
                         </a-form-item>
@@ -144,12 +143,11 @@ import { WrappedFormUtils } from 'ant-design-vue/types/form/form'
 })
 export default class MaterieIList extends Vue {
     //传入属性
-    @Prop({ type: Number, default: 0 }) readonly num!: number;
+    // @Prop({ type: Number, default: 0 }) num!: number;
     //计算属性
-    private get doubleMid(): number {
-        return this.num * 2;
-    }
-
+    // get doubleMid(): number {
+    //     return this.num * 2;
+    // }
 
     /** 是否正在加载主表格数据 */
     isLoadingData:boolean = false;
@@ -159,7 +157,7 @@ export default class MaterieIList extends Vue {
     data:Array<object> = [];
     columns:Array<object> = [];
     /** 成本Id */
-    productId? = '';
+    productId = '';
     /** 供应商列表 */
     supplierList = [];
     /** 分类列表 */
@@ -171,16 +169,16 @@ export default class MaterieIList extends Vue {
     formOutbound;
     /** 表格筛选项 */
     filter = {
-        code: '',
-        name: ''
+        searchText: ''
     };
+    editItem = {
+        supplierid: ''
+    }
     pagination = this.$root.getPagination();
     created() {
-        console.log('thisB', this);
         this.form = this.$form.createForm(this);
         this.formInbound = this.$form.createForm(this);
         this.formOutbound = this.$form.createForm(this);
-        this.$root.setBreadcrumb(['成本管理','成本列表']);
         if(this.$route.query.isnew) {
             this.drawerVisible = true;
         }
@@ -212,8 +210,7 @@ export default class MaterieIList extends Vue {
             let data = await this.$api.product.GetProductList({
                 pageNum: this.pagination.current,
                 pageSize: this.pagination.defaultPageSize,
-                code: this.filter.code,
-                name: this.filter.name
+                searchText: this.filter.searchText
             }, {
                 cancel: this.cancelSearch
             })
@@ -224,7 +221,7 @@ export default class MaterieIList extends Vue {
         }
     }
     roleChange() {
-        if(this.$root.is_manager) {
+        if(true) {
             this.columns = [
                 { title: '商品代码', dataIndex: 'code', key: 'code' },
                 { title: '产品名称', dataIndex: 'name', key: 'name' },
@@ -270,19 +267,18 @@ export default class MaterieIList extends Vue {
         })
     }
     /** 删除成本数据 */
-    remove(id) {
-        this.$common.get('/api/Product/DeleteProduct', { id }).then(d => {
-            this.form.clearField();
-            this.drawerVisible = false;
-            this.search();
-            this.$message.success(`成本删除成功。`, 10);
-        });
+    async remove(id) {
+        await this.$api.product.DeleteProduct({ id });
+        this.form.clearField();
+        this.drawerVisible = false;
+        this.search();
+        this.$message.success(`成本删除成功。`, 10);
     }
     onClose(isConfirm) {
         if(isConfirm) {
             this.form.validateFields((errors, values) => {
                 if(!errors) {
-                    this.$common.get('/api/Product/AddOrEditProduct', {
+                    this.$api.product.AddOrEditProduct({
                         ...this.form.getFieldsValue(),
                         id: this.productId
                     }).then(d => {

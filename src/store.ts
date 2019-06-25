@@ -8,6 +8,7 @@ export default new Vuex.Store({
         permissions: [
             {
                 id: -1,
+                code: '',
                 name: '',
                 remark: ''
             }
@@ -15,16 +16,19 @@ export default new Vuex.Store({
     },
     getters: {
         allPermissions(state) {
-            return state.permissions.map(i => i.name);
+            return state.permissions.map(i => i.code);
         },
         checkPermissions: (state) => (value) => {
+            let re = false;
             if(!value) {
-                return true;
+                re = true;
             } else if(typeof(value) == 'string') {
-                return !!state.permissions.find(i => i.name === value);
+                re = !!state.permissions.find(i => i.code === value);
             } else if(value instanceof Array) {
-                return value.every(val => !!state.permissions.find(i => i.name === val));
+                re = value.every(val => !!state.permissions.find(i => i.code === val));
             }
+            console.log(state.permissions.map(i => i.code), value, re);
+            return re;
         }
     },
     mutations: {

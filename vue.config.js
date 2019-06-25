@@ -1,4 +1,5 @@
 let webpack = require('webpack');
+let path = require('path');
 
 module.exports = {
     devServer: {
@@ -6,8 +7,14 @@ module.exports = {
 	},
     runtimeCompiler: true,
     configureWebpack: {
+        resolve: {
+            alias: {
+                '@ant-design/icons/lib/dist$': path.resolve(__dirname, './src/config/icons.ts')
+            }
+        },
         plugins: [
-            new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+            new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /zh-cn|jp/),
+            // new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
         ]
     },
     css: {

@@ -10,7 +10,7 @@
             <span slot="tags" slot-scope="tags">
                 <a-tag v-for="tag in tags" color="blue" :key="tag">{{tag}}</a-tag>
             </span>
-            <span slot="action" slot-scope="text, record">
+            <span slot="action">
                 <a-button type="primary" icon="check" @click="use" size="small">使用</a-button>
             </span>
         </a-table>

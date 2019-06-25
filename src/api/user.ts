@@ -1,6 +1,5 @@
 import Axios, { AxiosRequestConfig } from 'axios'; 
 import { get, post } from '@/tools/common';
-import { pageFilter } from "@/@types/basic";
 
 /** 添加用户接口-参数 */
 export interface AddOrEditUserParams {
@@ -10,8 +9,10 @@ export interface AddOrEditUserParams {
     Name: string;
     /** 密码 */
     Password: string;
+    /** 角色ID */
+    Roleid: string;
     /** 角色名称 */
-    Rolename: string;
+    Rolename?: string;
     /** 昵称 */
     Nickname?: string;
     /** 电话 */
@@ -72,6 +73,8 @@ export function GetUserList(params: GetUserListParams, conf?: AxiosRequestConfig
 
 /** dtoOrder */
 export interface dtoOrder {
+    /** 信息在Excel中的行数 */
+    index?: number;
     /** 序号 */
     id?: string;
     /** 编码 */

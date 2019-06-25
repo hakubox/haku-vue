@@ -1,16 +1,14 @@
 import Axios, { AxiosRequestConfig } from 'axios'; 
 import { get, post } from '@/tools/common';
 
-/** 单文件上传接口-参数 */
-export interface UploadFileParams {
-    /** file */
-    file: FormData;
+/** 获取系统中的全部角色-参数 */
+export interface GetRoleListParams {
 }
 
 
-/** 单文件上传接口-方法 */
-export function UploadFile(params: UploadFileParams, conf?: AxiosRequestConfig): Promise<any> {
-    return post(`/api/Upload/UploadFile`, params, conf);
+/** 获取系统中的全部角色-方法 */
+export function GetRoleList(params?: GetRoleListParams, conf?: AxiosRequestConfig): Promise<any> {
+    return get(`/api/Role/GetRoleList`, params, conf);
 }
 
 
@@ -53,7 +51,7 @@ export interface dtoOrder {
 }
 
 
-/** 文件上传控制器 */
+/** 角色信息操作模块 */
 export default {
-    UploadFile,
+    GetRoleList,
 }

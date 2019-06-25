@@ -1,7 +1,4 @@
-
-/** 用户模块 */
-export namespace user {
-    
+namespace Enum {
     /** 用户权限类型 */
     export enum userRole {
         /** 管理员 */
@@ -11,9 +8,4 @@ export namespace user {
         /** 游客 */
         visitor
     }
-}
-
-
-export default {
-    user
 }

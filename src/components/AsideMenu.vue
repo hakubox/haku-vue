@@ -1,5 +1,5 @@
 <template>
-    <a-menu v-model="currentmenu" @click="handleClick" class="aside-menu" :selectable="false" :defaultSelectedKeys="['/front/cost']" :openKeys.sync="openKeys" mode="inline" >
+    <a-menu v-model="currentmenu" @click="handleClick" class="aside-menu" :selectable="false" :defaultSelectedKeys="['/front/quotedprice']" :openKeys.sync="openKeys" mode="inline" >
 
         <!-- <a-menu-item key="/cost?isnew=1">新增成本</a-menu-item> -->
 
@@ -17,8 +17,13 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { State, Getter } from 'vuex-class';
 import { Route } from 'vue-router';
+import { Menu } from 'ant-design-vue';
+
+Vue.use(Menu);
 
 @Component({
+    components: {
+    },
     watch: {
         openKeys (val) {
             // console.log('openKeys', val)
@@ -51,8 +56,8 @@ export default class AsideMenu extends Vue {
                 }
             ]
         }, {
-            title: '系统设置', icon: 'setting', src: 'sub2', children: [
-                { 
+            title: '系统设置', permission: ['usermanager'], icon: 'setting', src: 'sub2', children: [
+                {
                     title: '用户管理', permission: ['usermanager'], src: '/front/usermanager'
                 }
             ]
@@ -60,15 +65,27 @@ export default class AsideMenu extends Vue {
     ];
 
     mounted() {
-        this.$bus.$on('routerchange', (to: Route) => {
+        const cb = to => {
             let queryArr = Object.entries(to.query);
             this.currentmenu = [ to.path + (queryArr.length ? ('?' + queryArr.map(([key, value]) => key + '=' + value).join('&')) : '') ];
-            console.warn(to);
+            this.$root.setBreadcrumb(to.matched.filter(i => i.meta && i.meta.title).map(i => ({
+                title: i.meta.title,
+                url: i.path
+            })));
+        }
+        let initRouterChange:any = localStorage.getItem('routerchange');
+        if(initRouterChange) {
+            cb(JSON.parse(initRouterChange));
+            localStorage.removeItem('routerchange');
+        }
+        this.$bus.$on('routerchange', (to: Route) => {
+            cb(to);
         });
         if(!this.currentmenu.length) {
             this.currentmenu = [window.location.pathname + window.location.search];
         }
     }
+    
     handleClick(e) {
         if(e.key) {
             this.$router.push(e.key);

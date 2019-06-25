@@ -1,10 +1,10 @@
 <template>
-    <div class="page-403">
+    <div class="page-404">
         <div class="page-body">
             <div class="page-img"></div>
             <div class="page-content">
-                <h1>403</h1>
-                <p>抱歉，你无权访问该页面</p>
+                <h1>404</h1>
+                <p>抱歉，你访问的页面不存在</p>
                 <a-button type="primary" @click="$router.go(-1)" class="">返回上一页</a-button>
             </div>
         </div>
@@ -26,7 +26,7 @@ export default class About extends Vue {
 
 <style lang="scss">
 
-.page-403 {
+.page-404 {
     position: relative;
     text-align: center;
     height: calc(100vh - 150px);
@@ -41,7 +41,7 @@ export default class About extends Vue {
         .page-img {
             display: inline-block;
             vertical-align: middle;
-            background-image: url(/img/403.svg);
+            background-image: url(/img/404.svg);
             width: 100%;
             max-width: 430px;
             height: 360px;

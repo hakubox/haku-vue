@@ -5,18 +5,17 @@
         </div>
         <div class="main-content">
             <div class="row">
-                <ul class="infos cols2 col4">
-                    <li label="商品代码"><a-input v-decorator="['a1']"></a-input></li>
-                    <li label="商品名称"><a-input v-decorator="['a2']"></a-input></li>
+                <ul class="infos cols1 col4">
+                    <li label="查询商品"><a-input v-model="filter.searchText" placeholder="搜索商品名称或代码" ></a-input></li>
                 </ul>
                 <div class="col3">
-                    <a-button icon="search" type="primary" @click="onSearch">搜索</a-button>
+                    <a-button :loading="isLoadingData" icon="search" type="primary" @click="search">搜索</a-button>
                 </div>
             </div>
 
             <hr />
             <div class="cost-list">
-                <a-table :columns="columns" :dataSource="data" size="small">
+                <!-- <a-table :columns="columns" :dataSource="data" size="small">
                     <a slot="name" slot-scope="text" href="javascript:;">{{text}}</a>
                     <span slot="customTitle">Name</span>
                     <span slot="a7" slot-scope="item, record">
@@ -25,6 +24,24 @@
                     </span>
                     <span slot="tags" slot-scope="tags">
                         <a-tag v-for="tag in tags" color="blue" :key="tag">{{tag}}</a-tag>
+                    </span>
+                </a-table> -->
+
+                <a-table :loading="{ tip: '加载中...', spinning: isLoadingData }" :pagination="pagination" @change="paginationChange" rowKey="id" :columns="columns" :dataSource="data" size="small">
+                    <a slot="name" slot-scope="text" href="javascript:;">{{text}}</a>
+                    <span slot="customTitle">Name</span>
+                    <span slot="tags" slot-scope="tags">
+                        <a-tag v-for="tag in tags" color="blue" :key="tag">{{tag}}</a-tag>
+                    </span>
+                    <span slot="price" slot-scope="item, record">
+                        <span>{{record['price']}}元</span>
+                    </span>
+                    <span slot="suppliername" slot-scope="item, record">
+                        <span>{{record['suppliername']}}</span>
+                    </span>
+                    <span slot="action" slot-scope="item, record">
+                        <a-button v-if="record['suppliername'] == '库存'" :style="{marginRight: '10px'}" type="primary" icon="edit" @click="detail(record)" size="small">库存详情</a-button>
+                        <span v-else>{{record['suppliername']}}</span>
                     </span>
                 </a-table>
             </div>
@@ -72,38 +89,44 @@
         </a-drawer>
 
         <!-- 库存详情 -->
-        <a-modal width="1100px" title="库存详情" v-model="quotedpriceVisible" :footer="null">
+        <a-modal :maskClosable="false" width="1100px" title="库存详情" v-model="quotedpriceVisible" :footer="null">
             <a-divider orientation="left">基本信息</a-divider>
             <div class="form cols3">
-                <dl><dt>商品名称</dt><dd>测试商品</dd></dl>
-                <dl><dt>剩余库存</dt><dd><strong class="txt-primary">120</strong></dd></dl>
+                <dl><dt>商品名称</dt><dd>{{editItem.name}}</dd></dl>
+                <dl><dt>剩余库存</dt><dd><strong class="txt-primary">{{editItem.number}}</strong></dd></dl>
             </div>
             <a-divider class="mt0" orientation="left">入库</a-divider>
-            <a-form :form="formInbound" @submit="inbound" layout="inline">
+            <a-form :form="formInbound" @submit.prevent="inbound" layout="inline">
                 <a-form-item label="来源" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
-                    <a-input v-decorator="[ 'source', {rules: [{ required: true, message: 'Please input your note!' }]} ]" />
+                    <a-input v-decorator="[ 'marking', {rules: [{ required: true, message: '请输入来源。' }]} ]" />
                 </a-form-item>
                 <a-form-item label="入库时间" :label-col="{ span: 8 }" :wrapper-col="{ span: 16 }">
-                    <a-date-picker v-decorator="[ 'source', {rules: [{ required: true, message: 'Please input your note!' }]} ]" />
+                    <a-date-picker v-decorator="[ 'runtime', {rules: [{ type: 'object', required: true, message: '请输入入库时间。' }]} ]" />
+                </a-form-item>
+                <a-form-item label="数量" :label-col="{ span: 8 }" :wrapper-col="{ span: 16 }">
+                    <a-input-number v-decorator="[ 'number', {rules: [{ required: true, message: '请输入入库数量。' }]} ]" />
                 </a-form-item>
                 <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
-                    <a-button type="primary" html-type="submit">入库</a-button>
+                    <a-button :loading="isBoundLoading" type="primary" html-type="submit">入库</a-button>
                 </a-form-item>
             </a-form>
             <a-divider orientation="left">出库</a-divider>
-            <a-form :form="formOutbound" @submit="outbound" layout="inline">
+            <a-form :form="formOutbound" @submit.prevent="outbound" layout="inline">
                 <a-form-item label="仓库" :label-col="{ span: 6 }" :wrapper-col="{ span: 18 }">
-                    <a-input v-decorator="[ 'source', {rules: [{ required: true, message: 'Please input your note!' }]} ]" />
+                    <a-input v-decorator="[ 'marking', {rules: [{ required: true, message: '请输入仓库。' }]} ]" />
                 </a-form-item>
                 <a-form-item label="出库时间" :label-col="{ span: 8 }" :wrapper-col="{ span: 16 }">
-                    <a-date-picker v-decorator="[ 'source', {rules: [{ required: true, message: 'Please input your note!' }]} ]" />
+                    <a-date-picker v-decorator="[ 'runtime', {rules: [{ type: 'object', required: true, message: '请输入出库时间。' }]} ]" />
+                </a-form-item>
+                <a-form-item label="数量" :label-col="{ span: 8 }" :wrapper-col="{ span: 16 }">
+                    <a-input-number v-decorator="[ 'number', {rules: [{ required: true, message: '请输入入库数量。' }]} ]" />
                 </a-form-item>
                 <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
-                    <a-button type="primary" html-type="submit">出库</a-button>
+                    <a-button :loading="isBoundLoading" type="primary" html-type="submit">出库</a-button>
                 </a-form-item>
             </a-form>
             <a-divider orientation="left">出入库记录</a-divider>
-            <a-table :columns="quotedpriceColumns" :dataSource="quotedpriceData" size="small" />
+            <a-table :loading="{ tip: '加载中...', spinning: isBoundLoading }" :columns="quotedpriceColumns" :dataSource="boundHistory" size="small" />
         </a-modal>
     </div>
 </template>
@@ -112,39 +135,17 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 
 const columns = [
-    { title: '商品代码', dataIndex: 'name', key: 'name' },
-    { title: '名称', key: 'age' },
-    { title: '规格', key: 'a1' },
-    { title: '单位', key: 'a3' },
-    { title: '品牌', key: 'address' },
-    { title: '类别', key: 'a4' },
-    { title: '备注', key: 'a5' },
-    { title: '船公司', key: 'a6' },
-    { title: '供应商', width: '100px', dataIndex: 'a7', key: 'a7', scopedSlots: { customRender: 'a7' } },
+    { title: '商品代码', dataIndex: 'code', key: 'code' },
+    { title: '产品名称', dataIndex: 'name' },
+    { title: '产品名称（英文）', dataIndex: 'enname' },
+    { title: '规格', dataIndex: 'norm' },
+    { title: '单位', dataIndex: 'price' },
+    { title: '品牌', dataIndex: 'brandname' },
+    { title: '类别', dataIndex: 'categoryname' },
+    { title: '备注', dataIndex: 'remark' },
+    // { title: '船公司', dataIndex: 'a6' },
+    { title: '供应商', dataIndex: 'suppliername', width: 100, scopedSlots: { customRender: 'action' } },
 ];
-
-const data = [{
-    key: '1',
-    name: 'A00001',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    a7: '测试供应商A',
-    tags: ['nice', 'developer'],
-}, {
-    key: '2',
-    name: 'A00002',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    a7: '库存',
-    tags: ['loser'],
-}, {
-    key: '3',
-    name: 'A00003',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-    a7: '测试供应商B',
-    tags: ['cool', 'teacher'],
-}];
 
 @Component({
   components: {
@@ -154,41 +155,47 @@ export default class InventoryList extends Vue {
     isnew:boolean = false;
     visible:boolean = false;
     confirmLoading:boolean = false;
-    data:Array<any> = data;
+    data:Array<any> = [];
     columns:Array<any> = columns;
     /** 库存弹出框是否显示 */
     quotedpriceVisible:boolean = false;
-    /**
-     * 编辑成本对象
-     */
-    editItem = {
-        id: ''
-    };
-    form;
+    isLoadingData = false;
+    /** 出入库加载中 */
+    isBoundLoading = false;
+    filter = {
+        searchText: ''
+    }
+    /** 库存信息 */
+    inventoryItem = {};
+    /** 库存日志 */
+    boundHistory:Array<any> = [];
+    /** 编辑成本对象 */
+    editItem:any = {};
     /** 库存详情表头 */
     quotedpriceColumns:Array<object> = [
-        { title: '操作', dataIndex: 'name', key: 'name' },
-        { title: '数量', dataIndex: 'balance', key: 'balance' },
-        { title: '结余', dataIndex: 'count', key: 'count' },
-        { title: '操作人', dataIndex: 'username', key: 'username' },
-        { title: '日期', dataIndex: 'updatetime', key: 'updatetime' }
+        { title: '操作', dataIndex: 'action', key: 'action' },
+        { title: '来源/仓库', dataIndex: 'marking' },
+        { title: '数量', dataIndex: 'number' },
+        { title: '结余', dataIndex: 'surplus' },
+        { title: '操作人', dataIndex: 'username' },
+        { title: '日期', dataIndex: 'operatingtime' }
     ]
-    quotedpriceData:Array<object> = [
-        { name: '入库', count: 100, balance: 300 },
-        { name: '出库', count: 200, balance: 200 },
-        { name: '入库', count: 150, balance: 400 },
-        { name: '出库', count: 50, balance: 250 },
-        { name: '入库', count: 300, balance: 300 }
-    ]
-    formInbound = {
-
-    }
-    formOutbound = {
-
-    }
+    form;
+    formInbound;
+    formOutbound;
+    pagination = this.$root.getPagination();
     created() {
-        this.$root.setBreadcrumb(['库存管理','库存列表']);
         this.form = this.$form.createForm(this);
+        this.formInbound = this.$form.createForm(this);
+        this.formOutbound = this.$form.createForm(this);
+        this.search();
+    }
+    changeDate() {
+
+    }
+    paginationChange(pagination, filters, sorter) {
+        this.pagination = pagination;
+        this.search();
     }
     edit(item) {
         this.form.setFieldsValue(item);
@@ -214,11 +221,19 @@ export default class InventoryList extends Vue {
             this.visible = false;
         }
     }
-    /**
-     * @method 搜索
-     */
-    onSearch() {
-
+    async search() {
+        try {
+            this.isLoadingData = true;
+            let data = await this.$api.product.GetProductList({
+                pageNum: this.pagination.current,
+                pageSize: this.pagination.defaultPageSize,
+                searchText: this.filter.searchText
+            })
+            this.data = Object.freeze(data.list);
+            this.pagination.total = data.total;
+        } finally {
+            this.isLoadingData = false;
+        }
     }
     use() {
 
@@ -226,14 +241,56 @@ export default class InventoryList extends Vue {
     /**
      * @method 查看库存详情
      */
-    detail() {
+    detail(item) {
+        this.editItem = Object.assign({}, item);
+        this.searchBoundHistory();
+        // this.form.setFieldsValue(inventoryItem);
         this.quotedpriceVisible = true;
     }
+    async searchBoundHistory() {
+        this.boundHistory = await this.$api.product.GetInventorylogList({
+            productid: this.editItem.id
+        });
+    }
     inbound() {
-
+        this.formInbound.validateFields(async (errors, values) => {
+            if(!errors) {
+                try {
+                    this.isBoundLoading = true;
+                    let history = await this.$api.product.AddInventorylog({
+                        operatingtime: values.runtime.format('YYYY-MM-DD'),
+                        productid: this.editItem.id,
+                        action: '入库',
+                        number: values.number,
+                        marking: values.marking
+                    });
+                    this.formInbound.resetFields();
+                    await this.searchBoundHistory();
+                } finally {
+                    this.isBoundLoading = false;
+                }
+            }
+        });
     }
     outbound() {
-
+        this.formOutbound.validateFields(async (errors, values) => {
+            if(!errors) {
+                try {
+                    this.isBoundLoading = true;
+                    let history = await this.$api.product.AddInventorylog({
+                        operatingtime: values.runtime.format('YYYY-MM-DD'),
+                        productid: this.editItem.id,
+                        action: '出库',
+                        number: values.number,
+                        marking: values.marking
+                    });
+                    this.formOutbound.resetFields();
+                    await this.searchBoundHistory();
+                } finally {
+                    this.isBoundLoading = false;
+                }
+            }
+        });
     }
 }
 </script>

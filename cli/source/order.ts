@@ -1,6 +1,5 @@
 import Axios, { AxiosRequestConfig } from 'axios'; 
 import { get, post } from '@/tools/common';
-import { pageFilter } from "@/@types/basic";
 
 /** 获取采购单详细信息-参数 */
 export interface GetOrderDetailParams {
@@ -19,7 +18,7 @@ export function GetOrderDetail(params: GetOrderDetailParams, conf?: AxiosRequest
 }
 
 
-/** -参数 */
+/** 导入运算数据输入Excel文件-参数 */
 export interface ImportOrderDetailParams {
     /** 文件ID */
     fileid: string;
@@ -28,14 +27,16 @@ export interface ImportOrderDetailParams {
 }
 
 
-/** -方法 */
-export function ImportOrderDetail(params: Array<ImportOrderDetailParams>, conf?: AxiosRequestConfig): Promise<any> {
-    return post(`/api/Order/ImportOrderDetail`, JSON.stringify(params), conf);
+/** 导入运算数据输入Excel文件-方法 */
+export function ImportOrderDetail(params: ImportOrderDetailParams, conf?: AxiosRequestConfig): Promise<any> {
+    return post(`/api/Order/ImportOrderDetail`, params, conf);
 }
 
 
 /** dtoOrder */
 export interface dtoOrder {
+    /** 信息在Excel中的行数 */
+    index?: number;
     /** 序号 */
     id?: string;
     /** 编码 */

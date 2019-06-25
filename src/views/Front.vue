@@ -4,7 +4,7 @@
             <div class="logo">船舶物料供应系统</div>
             <div class="fr">
                 <span class="txt-prop">欢迎，</span>
-                <span class="txt-primary" @click="$root.roleChange()">{{$root.is_manager ? '管理员' : '操作员'}}</span>
+                <span class="txt-primary" @click="$root.roleChange()">用户</span>
                 &nbsp;
                 <a class="btn btn-primary btn-xs" @click="$root.logout()">注销</a>
             </div>
@@ -25,17 +25,35 @@
                         <a-icon v-if="item.icon" :type="item.icon" /><span>{{item.title}}</span>
                     </a-breadcrumb-item>
                 </a-breadcrumb>
-                <router-view />
+                <div class="front-page">
+                    <transition :name="transitionName">
+                        <router-view />
+                    </transition>
+                </div>
             </a-layout>
         </a-layout>
     </a-layout>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import { Breadcrumb } from "@/@types/basic.d";
+import { Route } from 'vue-router';
 
-@Component({})
-export default class UserManager extends Vue {
+@Component({
+    watch: {
+        '$route' (to, from) {
+            const toDepth = to.path.split('/').length;
+            const fromDepth = from.path.split('/').length;
+            // @ts-ignore
+            this.transitionName = toDepth < fromDepth ? 'vux-pop-out' : 'vux-pop-in';
+        }
+    }
+})
+export default class Front extends Vue {
+    /** 面包屑 */
+    breadcrumbSource:Array<Breadcrumb> = [];
+    transitionName = 'vux-pop-out'
 }
 </script>
 
@@ -48,5 +66,41 @@ export default class UserManager extends Vue {
         margin: 16px 28px 16px 0;
         float: left;
         line-height: 32px;
+    }
+
+    .front-page {
+        position: relative;
+    }
+
+    .front-page > div {
+        width: 100%;
+    }
+
+    .vux-pop-out-enter-active,
+    .vux-pop-out-leave-active,
+    .vux-pop-in-enter-active,
+    .vux-pop-in-leave-active {
+        will-change: transform;
+        transition: all 0.2s;
+        height: 100%;
+        position: absolute;
+        backface-visibility: hidden;
+        perspective: 1000;
+    }
+    .vux-pop-out-enter {
+        opacity: 0;
+        transform: translate3d(0, -20px, 0);
+    }
+    .vux-pop-out-leave-active {
+        opacity: 0;
+        transform: translate3d(0, 20px, 0);
+    }
+    .vux-pop-in-enter {
+        opacity: 0;
+        transform: translate3d(0, 20px, 0);
+    }
+    .vux-pop-in-leave-active {
+        opacity: 0;
+        transform: translate3d(0, -20px, 0);
     }
 </style>

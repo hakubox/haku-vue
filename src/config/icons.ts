@@ -1,0 +1,24 @@
+export { default as SmileOutline } from '@ant-design/icons/lib/outline/SmileOutline';
+export { default as MehOutline } from '@ant-design/icons/lib/outline/MehOutline';
+export { default as FileSearchOutline } from '@ant-design/icons/lib/outline/FileSearchOutline';
+export { default as LoadingOutline } from '@ant-design/icons/lib/outline/LoadingOutline';
+export { default as UserOutline } from '@ant-design/icons/lib/outline/UserOutline';
+export { default as LockOutline } from '@ant-design/icons/lib/outline/LockOutline';
+export { default as AppstoreOutline } from '@ant-design/icons/lib/outline/AppstoreOutline';
+export { default as SettingOutline } from '@ant-design/icons/lib/outline/SettingOutline';
+export { default as SearchOutline } from '@ant-design/icons/lib/outline/SearchOutline';
+export { default as EditOutline } from '@ant-design/icons/lib/outline/EditOutline';
+export { default as DeleteOutline } from '@ant-design/icons/lib/outline/DeleteOutline';
+export { default as PlusOutline } from '@ant-design/icons/lib/outline/PlusOutline';
+export { default as LeftOutline } from '@ant-design/icons/lib/outline/LeftOutline';
+export { default as RightOutline } from '@ant-design/icons/lib/outline/RightOutline';
+export { default as DownOutline } from '@ant-design/icons/lib/outline/DownOutline';
+export { default as CloseOutline } from '@ant-design/icons/lib/outline/CloseOutline';
+export { default as CalendarOutline } from '@ant-design/icons/lib/outline/CalendarOutline';
+export { default as UploadOutline } from '@ant-design/icons/lib/outline/UploadOutline';
+export { default as DownloadOutline } from '@ant-design/icons/lib/outline/DownloadOutline';
+export { default as PaperClipOutline } from '@ant-design/icons/lib/outline/PaperClipOutline';
+
+export { default as CheckCircleFill } from '@ant-design/icons/lib/fill/CheckCircleFill';
+export { default as WarningFill } from '@ant-design/icons/lib/fill/WarningFill';
+export { default as StopFill } from '@ant-design/icons/lib/fill/StopFill';

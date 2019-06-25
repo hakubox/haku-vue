@@ -14,7 +14,7 @@ module.exports = {
         "no-script-url": 1,
         "no-var": 1,
         "new-cap": 0,
-        "no-magic-numbers": 1,
+        "no-magic-numbers": 0,
         "space-before-blocks": [0, "always"],
         "space-before-function-paren": [0, "always"],
         "no-param-reassign": 2,
@@ -32,5 +32,8 @@ module.exports = {
             legacyDecorators: true
         }
     },
-    extends: ["plugin:vue/essential"] //, "@vue/prettier"
+    extends: ["plugin:vue/essential"], //, "@vue/prettier"
+    globals: {
+        _: true
+    },
 };
