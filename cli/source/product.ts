@@ -145,6 +145,88 @@ export function AddInventorylog(params: AddInventorylogParams, conf?: AxiosReque
 }
 
 
+/** 通过产品ID获取产品图片列表-参数 */
+export interface GetProductImgListParams {
+    /** 产品ID */
+    productid: string;
+}
+
+
+/** 通过产品ID获取产品图片列表-方法 */
+export function GetProductImgList(params: GetProductImgListParams, conf?: AxiosRequestConfig): Promise<any> {
+    return get(`/api/Product/GetProductImgList`, params, conf);
+}
+
+
+/** 通过产品图片ID删除某个图片-参数 */
+export interface DeleteProductImgParams {
+    /** 图片ID */
+    imgid: string;
+}
+
+
+/** 通过产品图片ID删除某个图片-方法 */
+export function DeleteProductImg(params: DeleteProductImgParams, conf?: AxiosRequestConfig): Promise<any> {
+    return post(`/api/Product/DeleteProductImg`, params, conf);
+}
+
+
+/** 产品图片上传模块-参数 */
+export interface AddProductImgParams {
+    /** 产品ID */
+    productid: string;
+    /** 文件ID */
+    fileid: string;
+}
+
+
+/** 产品图片上传模块-方法 */
+export function AddProductImg(params: AddProductImgParams, conf?: AxiosRequestConfig): Promise<any> {
+    return post(`/api/Product/AddProductImg`, params, conf);
+}
+
+
+/** 通过产品ID获取产品标签列表-参数 */
+export interface GetProductTagListParams {
+    /** 产品ID */
+    productid: string;
+}
+
+
+/** 通过产品ID获取产品标签列表-方法 */
+export function GetProductTagList(params: GetProductTagListParams, conf?: AxiosRequestConfig): Promise<any> {
+    return get(`/api/Product/GetProductTagList`, params, conf);
+}
+
+
+/** 通过产品标签ID删除某个标签-参数 */
+export interface DeleteProductTagParams {
+    /** 标签ID */
+    tagid: string;
+}
+
+
+/** 通过产品标签ID删除某个标签-方法 */
+export function DeleteProductTag(params: DeleteProductTagParams, conf?: AxiosRequestConfig): Promise<any> {
+    return post(`/api/Product/DeleteProductTag`, params, conf);
+}
+
+
+/** 产品标签添加功能-参数 */
+export interface AddProductTagParams {
+    /** 产品ID */
+    productid: string;
+    /** 标签内容 */
+    name: string;
+}
+
+
+/** 产品标签添加功能-方法 */
+export function AddProductTag(params: AddProductTagParams, conf?: AxiosRequestConfig): Promise<any> {
+    return post(`/api/Product/AddProductTag`, params, conf);
+}
+
+
 /** dtoOrder */
 export interface dtoOrder {
     /** 信息在Excel中的行数 */
@@ -194,4 +276,10 @@ export default {
     DeleteProduct,
     GetInventorylogList,
     AddInventorylog,
+    GetProductImgList,
+    DeleteProductImg,
+    AddProductImg,
+    GetProductTagList,
+    DeleteProductTag,
+    AddProductTag,
 }

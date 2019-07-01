@@ -29,7 +29,7 @@ export interface ImportOrderDetailParams {
 
 /** 导入运算数据输入Excel文件-方法 */
 export function ImportOrderDetail(params: ImportOrderDetailParams, conf?: AxiosRequestConfig): Promise<any> {
-    return post(`/api/Order/ImportOrderDetail`, params, conf);
+    return post(`/api/Order/ImportOrderDetail`, JSON.stringify(params), conf);
 }
 
 

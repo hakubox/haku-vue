@@ -227,7 +227,8 @@ export default class InventoryList extends Vue {
             let data = await this.$api.product.GetProductList({
                 pageNum: this.pagination.current,
                 pageSize: this.pagination.defaultPageSize,
-                searchText: this.filter.searchText
+                searchText: this.filter.searchText,
+                supplier: '库存'
             })
             this.data = Object.freeze(data.list);
             this.pagination.total = data.total;

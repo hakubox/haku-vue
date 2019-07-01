@@ -74,7 +74,8 @@ export default class UserManager extends Vue {
                     });
 
                     localStorage.setItem('Authorization', 'Bearer ' + token);
-                    this.$root.userInfo = await this.$api.user.GetUser();
+                    let userInfo = await this.$api.user.GetUser();
+                    this.$store.commit('setUserInfo', userInfo);
 
                     let permissions = await this.$api.funcation.GetFuncationListByUserId();
                     this.$store.commit('setPermissions', permissions);

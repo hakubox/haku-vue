@@ -68,7 +68,7 @@ export default class AsideMenu extends Vue {
         const cb = to => {
             let queryArr = Object.entries(to.query);
             this.currentmenu = [ to.path + (queryArr.length ? ('?' + queryArr.map(([key, value]) => key + '=' + value).join('&')) : '') ];
-            this.$root.setBreadcrumb(to.matched.filter(i => i.meta && i.meta.title).map(i => ({
+            this.$root.setBreadcrumb((to.matched || []).filter(i => i.meta && i.meta.title).map(i => ({
                 title: i.meta.title,
                 url: i.path
             })));

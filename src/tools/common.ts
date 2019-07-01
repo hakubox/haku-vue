@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { notification, message } from 'ant-design-vue';
 import qs from 'qs';
-import router from '../router';
+import router from '@/config/router';
 
 export function getToken(): string {
     return 'Bearer ' + localStorage.getItem('Authorization');

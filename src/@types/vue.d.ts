@@ -47,7 +47,5 @@ declare module 'vue/types/vue' {
         setBreadcrumb(arr: Array<Breadcrumb | string>): void;
         /** [root]获取分页器默认参数 */
         getPagination(config?: object): Pagination;
-        /** [root]用户信息 */
-        userInfo: UserInfo;
     }
 }

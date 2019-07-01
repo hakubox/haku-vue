@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import store from '@/store';
+import store from '@/config/store';
 
 function insertAfter(newElement, targentElement) {
     let parent = targentElement.parentNode;

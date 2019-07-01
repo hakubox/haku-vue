@@ -6,6 +6,9 @@ todolist.todo
 
 cli/appsettings.json
 
+assembly/bin
+public/bin
+
 # local env files
 .env.local
 .env.*.local

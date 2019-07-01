@@ -14,6 +14,15 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 
+// export function add(a, b) {
+//     let count = 0;
+//     while (count < b) {
+//         a += count;
+//         count++;
+//     }
+//     return a;
+// }
+
 @Component({
     components: {}
 })
@@ -21,11 +30,25 @@ export default class About extends Vue {
     go() {
         this.$root;
     }
+    async created() {
+        // const loader = require("assemblyscript/lib/loader");
+        // const myImports = {};
+        // const myModule = await loader.instantiateStreaming(
+        //     fetch("/bin/module.optimized.wasm"),
+        //     myImports
+        // );
+        // console.time('a');
+        // myModule.add(0, 10000);
+        // console.timeEnd('a');
+        
+        // console.time('b');
+        // add(0, 10000);
+        // console.timeEnd('b');
+    }
 }
 </script>
 
 <style lang="scss">
-
 .page-404 {
     position: relative;
     text-align: center;
@@ -37,7 +60,7 @@ export default class About extends Vue {
         right: 0px;
         top: 50%;
         transform: translateY(-50%);
-        
+
         .page-img {
             display: inline-block;
             vertical-align: middle;

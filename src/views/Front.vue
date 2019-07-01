@@ -4,7 +4,7 @@
             <div class="logo">船舶物料供应系统</div>
             <div class="fr">
                 <span class="txt-prop">欢迎，</span>
-                <span class="txt-primary" @click="$root.roleChange()">用户</span>
+                <span class="txt-primary">{{userInfo.nickname}}</span>
                 &nbsp;
                 <a class="btn btn-primary btn-xs" @click="$root.logout()">注销</a>
             </div>
@@ -37,23 +37,21 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import { State, Getter, Mutation } from 'vuex-class';
 import { Breadcrumb } from "@/@types/basic.d";
 import { Route } from 'vue-router';
 
-@Component({
-    watch: {
-        '$route' (to, from) {
-            const toDepth = to.path.split('/').length;
-            const fromDepth = from.path.split('/').length;
-            // @ts-ignore
-            this.transitionName = toDepth < fromDepth ? 'vux-pop-out' : 'vux-pop-in';
-        }
-    }
-})
+@Component({})
 export default class Front extends Vue {
+    @Getter('getUserInfo') userInfo;
     /** 面包屑 */
     breadcrumbSource:Array<Breadcrumb> = [];
     transitionName = 'vux-pop-out'
+    @Watch('$route') router(to, from) {
+        const toDepth = to.path.split('/').length;
+        const fromDepth = from.path.split('/').length;
+        this.transitionName = toDepth < fromDepth ? 'vux-pop-out' : 'vux-pop-in';
+    };
 }
 </script>
 

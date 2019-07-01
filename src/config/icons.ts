@@ -18,6 +18,10 @@ export { default as CalendarOutline } from '@ant-design/icons/lib/outline/Calend
 export { default as UploadOutline } from '@ant-design/icons/lib/outline/UploadOutline';
 export { default as DownloadOutline } from '@ant-design/icons/lib/outline/DownloadOutline';
 export { default as PaperClipOutline } from '@ant-design/icons/lib/outline/PaperClipOutline';
+export { default as CheckCircleOutline } from '@ant-design/icons/lib/outline/CheckCircleOutline';
+export { default as InfoCircleOutline } from '@ant-design/icons/lib/outline/InfoCircleOutline';
+export { default as ExclamationCircleOutline } from '@ant-design/icons/lib/outline/ExclamationCircleOutline';
+export { default as CloseCircleOutline } from '@ant-design/icons/lib/outline/CloseCircleOutline';
 
 export { default as CheckCircleFill } from '@ant-design/icons/lib/fill/CheckCircleFill';
 export { default as WarningFill } from '@ant-design/icons/lib/fill/WarningFill';

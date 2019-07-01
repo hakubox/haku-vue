@@ -148,6 +148,7 @@ export default class MaterieIList extends Vue {
     // get doubleMid(): number {
     //     return this.num * 2;
     // }
+    @Getter('checkPermissions') checkPermissions;
 
     /** 是否正在加载主表格数据 */
     isLoadingData:boolean = false;
@@ -182,9 +183,34 @@ export default class MaterieIList extends Vue {
         if(this.$route.query.isnew) {
             this.drawerVisible = true;
         }
-
-        this.roleChange();
-        this.$bus.$on('rolechange', this.roleChange);
+        
+        if(this.checkPermissions('allcostlist')) {
+            this.columns = [
+                { title: '商品代码', dataIndex: 'code', key: 'code' },
+                { title: '产品名称', dataIndex: 'name', key: 'name' },
+                { title: '产品名称（英文）', dataIndex: 'enname', key: 'enname' },
+                { title: '规格', dataIndex: 'norm', key: 'norm' },
+                { title: '单位', dataIndex: 'unit', key: 'unit' },
+                { title: '单价', dataIndex: 'price', key: 'price', scopedSlots: { customRender: 'price' } },
+                { title: '品牌', dataIndex: 'brandname', key: 'brandname' },
+                { title: '类别', dataIndex: 'categoryname', key: 'categoryname' },
+                { title: '备注', dataIndex: 'remark', key: 'remark' },
+                { title: '供应商', width: '100px', dataIndex: 'suppliername', key: 'suppliername', scopedSlots: { customRender: 'suppliername' } },
+                { title: '操作', width: '200px', key: 'action', scopedSlots: { customRender: 'action' } }
+            ];
+        } else {
+            this.columns = [
+                { title: '商品代码', dataIndex: 'code', key: 'code' },
+                { title: '产品名称', dataIndex: 'name', key: 'name' },
+                { title: '产品名称（英文）', dataIndex: 'enname', key: 'enname' },
+                { title: '品牌', dataIndex: 'brandname', key: 'brandname' },
+                { title: '规格', dataIndex: 'norm', key: 'norm' },
+                { title: '单位', dataIndex: 'unit', key: 'unit' },
+                { title: '类别', dataIndex: 'categoryname', key: 'categoryname' },
+                { title: '备注', dataIndex: 'remark', key: 'remark' },
+                { title: '供应商', width: '100px', dataIndex: 'suppliername', key: 'suppliername', scopedSlots: { customRender: 'suppliername' } },
+            ];
+        }
         this.search();
 
         this.$api.product.GetSupplierList().then(d => this.supplierList = d);
@@ -220,38 +246,6 @@ export default class MaterieIList extends Vue {
             this.isLoadingData = false;
         }
     }
-    roleChange() {
-        if(true) {
-            this.columns = [
-                { title: '商品代码', dataIndex: 'code', key: 'code' },
-                { title: '产品名称', dataIndex: 'name', key: 'name' },
-                { title: '产品名称（英文）', dataIndex: 'enname', key: 'enname' },
-                { title: '规格', dataIndex: 'norm', key: 'norm' },
-                { title: '单位', dataIndex: 'unit', key: 'unit' },
-                { title: '单价', dataIndex: 'price', key: 'price', scopedSlots: { customRender: 'price' } },
-                { title: '品牌', dataIndex: 'brandname', key: 'brandname' },
-                { title: '类别', dataIndex: 'categoryname', key: 'categoryname' },
-                { title: '备注', dataIndex: 'remark', key: 'remark' },
-                { title: '供应商', width: '100px', dataIndex: 'suppliername', key: 'suppliername', scopedSlots: { customRender: 'suppliername' } },
-                { title: '操作', width: '200px', key: 'action', scopedSlots: { customRender: 'action' } }
-            ];
-        } else {
-            this.columns = [
-                { title: '商品代码', dataIndex: 'code', key: 'code' },
-                { title: '产品名称', dataIndex: 'name', key: 'name' },
-                { title: '产品名称（英文）', dataIndex: 'enname', key: 'enname' },
-                { title: '品牌', dataIndex: 'brandname', key: 'brandname' },
-                { title: '规格', dataIndex: 'norm', key: 'norm' },
-                { title: '单位', dataIndex: 'unit', key: 'unit' },
-                { title: '类别', dataIndex: 'categoryname', key: 'categoryname' },
-                { title: '备注', dataIndex: 'remark', key: 'remark' },
-                { title: '供应商', width: '100px', dataIndex: 'suppliername', key: 'suppliername', scopedSlots: { customRender: 'suppliername' } },
-            ];
-            
-            //?????
-            //this.data = [].filter(i => i.a7 == '库存');
-        }
-    }
     edit(item) {
         this.productId = item.id;
         this.drawerVisible = true;
@@ -284,7 +278,7 @@ export default class MaterieIList extends Vue {
                     }).then(d => {
                         this.form.clearField();
                         this.drawerVisible = false;
-                        this.productId = undefined;
+                        this.productId = '';
                         this.search();
                         this.$message.success(`成本${this.productId?'编辑':'新增'}成功。`, 10);
                     });

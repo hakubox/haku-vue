@@ -1,9 +1,9 @@
 import Vue, { VNode, VueConstructor } from "vue";
 import App from "./App.vue";
-import router from "./router";
-import store from "./store";
+import router from "@/config/router";
+import store from "@/config/store";
 import axios from 'axios';
-import "./registerServiceWorker";
+import "./tools/registerServiceWorker";
 import '@/config/enum';
 import {} from "@/@types/antd-vue.d";
 //公共函数库
@@ -12,7 +12,7 @@ import * as common from '@/tools/common';
 require('moment').locale('zn-cn');
 
 //自定义指令
-import "@/directives";
+import "@/tools/directives";
 //ant-design-vue
 import "@/config/components";
 import '@/assets/less/variables.less';
@@ -73,6 +73,11 @@ Vue.prototype.l = () => {
     if(localStorage.getItem('Authorization')) {
         let permissions = await api.funcation.GetFuncationListByUserId();
         store.commit('setPermissions', permissions);
+
+        let userInfo = await api.user.GetUser();
+        store.commit('setUserInfo', userInfo);
+    } else {
+        router.push('/login');
     }
 
     Vue.mixin({
