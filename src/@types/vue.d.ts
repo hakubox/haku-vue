@@ -6,6 +6,7 @@ import { pageFilter, Breadcrumb, UserInfo } from "@/@types/basic.d";
 // import '@/config/enum';
 import { Vue } from 'vue-property-decorator';
 import { Pagination } from 'ant-design-vue';
+import Axios from 'axios';
 
 // Vue实例类型添加
 declare module 'vue/types/vue' {
@@ -31,6 +32,7 @@ declare module 'vue/types/vue' {
         $common: typeof common;
         /** 调用后台API */
         $api: typeof api;
+        $axios: typeof Axios;
         /** 全局枚举 */
         // $emum: typeof sysEnum;
         /** EventBus */

@@ -3,18 +3,13 @@ import AsideMenu from '@/components/AsideMenu.vue';
 import AsideSubMenu from '@/components/AsideSubMenu.vue';
 import MainHeader from '@/components/MainHeader.vue';
 
-let components = {
-    AsideMenu,
-    AsideSubMenu,
-    MainHeader
-};
 
-console.log(components);
+const components = require.context('../components/', true, /\.(vue|ts|js)$/);
 
 const install = function():void {
-    console.log(components);
-    Object.entries(components).forEach(([name, component]) => {
-        Vue.component(name, component);
+    components.keys().forEach(name => {
+        let componentName = name.replace(/\.\/|\.(js|ts|vue)/g, '');
+        Vue.component(componentName, components(name).default);
     });
 };
 

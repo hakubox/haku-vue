@@ -23,6 +23,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
+import { AxiosRequestConfig, AxiosResponse } from "axios";
 
 const columns = [
     { title: '商品代码', dataIndex: 'name', key: 'name' },
@@ -59,11 +60,17 @@ const data = [{
     tags: ['cool', 'teacher'],
 }];
 
-@Component({
-    components: {
-    }
-})
+
+
+interface User {
+    id: string,
+    name?: string,
+    age?: number
+}
+
+@Component({ components: { } })
 export default class UserManager extends Vue {
+    items:Array<User> = [];
     visible:boolean = false;
     confirmLoading:boolean = false;
     data:Array<object> = data;
@@ -83,9 +90,12 @@ export default class UserManager extends Vue {
         console.log('Clicked cancel button');
         this.visible = false;
     }
+
     /** 搜索 */
     onSearch() {
-
+        this.$axios.get<Array<User>>('').then(d => {
+            this.items = d.data;
+        })
     }
     use() {
 

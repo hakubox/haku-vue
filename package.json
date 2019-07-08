@@ -13,8 +13,8 @@
     "test:unit": "vue-cli-service test:unit",
     "buildapi": "cd cli | dotnet tools.dll",
     "assemblybuild": "npm run assemblybuild:untouched && npm run assemblybuild:optimized",
-    "assemblybuild:untouched": "asc assembly/src/module.ts -t public/bin/module.untouched.wat -b public/bin/module.untouched.wasm --validate --sourceMap --measure",
-    "assemblybuild:optimized": "asc assembly/src/module.ts -t public/bin/module.optimized.wat -b public/bin/module.optimized.wasm --validate --sourceMap --measure --optimize"
+    "assemblybuild:untouched": "asc assembly/module.ts -t public/assembly/module.untouched.wat -b public/assembly/module.untouched.wasm --validate --sourceMap --measure",
+    "assemblybuild:optimized": "asc assembly/module.ts -t public/assembly/module.optimized.wat -b public/assembly/module.optimized.wasm --validate --sourceMap --measure --optimize"
   },
   "dependencies": {
     "ant-design-vue": "^1.3.10",

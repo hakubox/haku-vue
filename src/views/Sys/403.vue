@@ -21,6 +21,9 @@ export default class About extends Vue {
     go() {
         this.$root;
     }
+
+    created() {
+    }
 }
 </script>
 

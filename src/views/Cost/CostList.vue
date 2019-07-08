@@ -1,7 +1,8 @@
 <template>
     <div>
         <div class="main-tool-btns">
-            <a-button v-action:cost-add type="primary" icon="plus" @click="add">添加成本</a-button>
+            <a-button permission="cost-add" v-action:cost-add type="primary" icon="plus" @click="add">添加成本</a-button>
+            <a-date-picker />
         </div><!--  v-action:cost-edit -->
         <a-layout-content class="main-content">
             <div class="row">
@@ -135,7 +136,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { State, Getter, Mutation } from 'vuex-class';
 import { getPagination } from '@/tools/common';
-import { WrappedFormUtils } from 'ant-design-vue/types/form/form'
+import { WrappedFormUtils } from 'ant-design-vue/types/form/form';
 
 @Component({
   components: {
@@ -176,6 +177,7 @@ export default class MaterieIList extends Vue {
         supplierid: ''
     }
     pagination = this.$root.getPagination();
+
     created() {
         this.form = this.$form.createForm(this);
         this.formInbound = this.$form.createForm(this);

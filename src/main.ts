@@ -17,7 +17,7 @@ import "@/tools/directives";
 import "@/config/components";
 import '@/assets/less/variables.less';
 //自定义组件库
-import components from "@/components/index";
+import components from "@/tools/registerGlobalComponents.ts";
 //API
 import api from '@/api/index';
 //主样式
@@ -67,6 +67,24 @@ let i18n = new VueI18n({
 Vue.prototype.l = () => {
     return '中英文';
 };
+
+// Vue.mixin({
+//     props: ['permission'],
+//     created(this:Vue) {
+//         console.log('混入对象的钩子被调用')
+//         if(this.permission) {
+//             debugger;
+//             if(!this.$store.getters.checkPermissions(this.permission)) {
+//                 this._render = function() {
+//                     let node = new this.$vnode.constructor();
+//                     node.text = '';
+//                     node.isComment = true;
+//                     return node;
+//                 };
+//             }
+//         }
+//     }
+// });
 
 (async function () {
     //获取权限
